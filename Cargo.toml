@@ -1,0 +1,16 @@
+[package]
+name = "fltk-grid"
+version = "0.1.0"
+edition = "2018"
+description = "A grid widget for fltk-rs"
+repository = "https://github.com/fltk-rs/fltk-grid"
+documentation = "https://docs.rs/fltk-grid"
+keywords = ["gui", "ui", "widgets", "bindings", "graphics"]
+categories = ["gui"]
+readme = "README.md"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+fltk = "1.3"
