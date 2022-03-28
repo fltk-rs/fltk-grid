@@ -67,8 +67,8 @@ impl Form {
 }
 
 fn main() {
-    let a = app::App::default();
-    let mut win = window::Window::default().with_size(500, 400);
+    let a = app::App::default().with_scheme(app::Scheme::Gtk);
+    let mut win = window::Window::default().with_size(500, 300);
     let mut form = Form::default();
     form.register_default_callback();
     win.end();

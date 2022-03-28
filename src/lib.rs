@@ -10,96 +10,31 @@ fltk = "1.3"
 fltk-grid = "0.1"
 ```
 
-```rust,no_run
-use fltk::{prelude::*, *};
-use fltk_grid::Grid;
-
-struct Form {
-    grid: Grid,
-    name: input::Input,
-    age: input::IntInput,
-    occupation: input::Input,
-    btn: button::Button,
-}
-
-impl Form {
-    pub fn default() -> Self {
-        let mut grid = Grid::default_fill();
-        grid.set_layout(10, 5); // construct a new grid
-        let name = input::Input::default();
-        let age = input::IntInput::default();
-        let occupation = input::Input::default();
-        let btn = button::Button::default().with_label("Submit");
-        let mut g = Self {
-            grid,
-            name,
-            age,
-            occupation,
-            btn,
-        };
-        g.fill();
-        g
-    }
-
-    fn fill(&mut self) {
-        let grid = &mut self.grid;
-        grid.debug(false); // set to true to see cell outlines
-        grid.insert_ext(
-            // insert widgets
-            &mut frame::Frame::default().with_label("Employee Form"),
-            0,
-            1,
-            3,
-            1,
-        );
-        grid.insert(&mut frame::Frame::default().with_label("Name"), 2, 1);
-        grid.insert(&mut self.name, 2, 3);
-        grid.insert(&mut frame::Frame::default().with_label("Age"), 4, 1);
-        grid.insert(&mut self.age, 4, 3);
-        grid.insert(&mut frame::Frame::default().with_label("Occupation"), 6, 1);
-        grid.insert(&mut self.occupation, 6, 3);
-        grid.insert(&mut self.btn, 8, 2);
-    }
-
-    fn register_default_callback(&mut self) {
-        self.btn.set_callback({
-            let name = self.name.clone();
-            let age = self.age.clone();
-            let occupation = self.occupation.clone();
-            move |_| {
-                println!("Name: {}", name.value());
-                println!("Age: {}", age.value());
-                println!("Occupation: {}", occupation.value());
-            }
-        });
-    }
-
-    pub fn resize(&mut self, x: i32, y: i32, w: i32, h: i32) {
-        self.grid.resize(x, y, w, h); // determine how it's resized
-    }
-}
-
-fn main() {
-    let a = app::App::default();
-    let mut win = window::Window::default().with_size(500, 400);
-    let mut form = Form::default();
-    form.register_default_callback();
-    win.end();
-    win.make_resizable(true);
-    win.show();
-
-    win.resize_callback(move |_, _, _, w, h| form.resize(0, 0, w, h));
-
-    a.run().unwrap();
-}
-```
-
 Basically, the crate contains a single type Grid which has 4 main non-constructor methods:
 - set_layout(): specifies the number of rows and columns of the grid.
 - insert(): specifies the widget to be inserted, along with in which cell (row, column).
 - insert_ext(): adds to insert the row span and column span.
-- debug(): shows the cell outline and their numbering, useful for prototyping.
 - resize(): determines how the grid is resized.
+- debug(): shows the cell outline and their numbering, useful for prototyping. 
+
+
+```rust,no_run
+use fltk::{prelude::*, *};
+use fltk_grid::Grid;
+
+fn main() {
+    let a = app::App::default().with_scheme(app::Scheme::Gtk);
+    let mut win = window::Window::default().with_size(500, 300);
+    let mut grid = Grid::default_fill();
+    grid.debug(false); // set to true to show cell outlines and numbers
+    grid.set_layout(5, 5); // 5 rows, 5 columns
+    grid.insert(&mut button::Button::default(), 0, 1); // widget, row, col
+    grid.insert_ext(&mut button::Button::default(), 2, 1, 3, 1); // widget, row, col, row_span, col_span
+    win.end();
+    win.show();
+    a.run().unwrap();
+}
+```
 */
 
 #![allow(clippy::needless_doctest_main)]
@@ -183,7 +118,8 @@ impl Grid {
     }
 
     /// Removes a widget
-    pub fn remove<W: WidgetExt>(&mut self, widget: &mut W) {
+    pub fn remove<W: WidgetExt>(&mut self, widget: &W) {
+        self.widgets.retain(|_, v| unsafe { v.as_widget_ptr() != widget.as_widget_ptr() });
         self.table.remove(widget);
     }
 
@@ -210,6 +146,7 @@ impl Grid {
         if flag {
             self.table.draw_cell(move |_, ctx, row, col, x, y, w, h| {
                 if ctx == table::TableContext::Cell {
+                    draw::set_font(enums::Font::Helvetica, 14);
                     draw::set_draw_color(enums::Color::Red);
                     draw::draw_rect(x, y, w, h);
                     draw::draw_text2(
