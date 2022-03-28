@@ -40,8 +40,8 @@ Run `cargo run --example form`
 
 - [Form example](https://github.com/fltk-rs/fltk-grid/blob/main/examples/form.rs)
 
-![image](https://user-images.githubusercontent.com/37966791/160343002-06763412-4c94-4955-9444-4d2ba533e3ac.png)
+![image](https://user-images.githubusercontent.com/37966791/160345977-136af513-f906-419d-9008-035baf40a372.png)
 
 Setting Grid::debug(true):
 
-![image](https://user-images.githubusercontent.com/37966791/160343165-a96161a1-4f86-4995-a990-e78b72f7d109.png)
+![image](https://user-images.githubusercontent.com/37966791/160346084-f3b0dad7-bd14-41da-99a0-768f7327ab2c.png)

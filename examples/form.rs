@@ -30,14 +30,14 @@ impl Form {
 
     fn fill(&mut self) {
         let grid = &mut self.grid;
-        grid.debug(true); // set to true to see cell outlines
+        grid.debug(false); // set to true to see cell outlines
+        let mut title = frame::Frame::default().with_label("Employee Form");
+        title.set_frame(enums::FrameType::FlatBox);
+        title.set_color(enums::Color::Red);
+        title.set_label_color(enums::Color::White);
         grid.insert_ext(
             // insert widgets
-            &mut frame::Frame::default().with_label("Employee Form"),
-            0,
-            1,
-            3,
-            1,
+            &mut title, 0, 1, 3, 1,
         );
         grid.insert(&mut frame::Frame::default().with_label("Name"), 2, 1);
         grid.insert(&mut self.name, 2, 3);

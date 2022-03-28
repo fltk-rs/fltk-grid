@@ -15,7 +15,7 @@ Basically, the crate contains a single type Grid which has 4 main non-constructo
 - insert(): specifies the widget to be inserted, along with in which cell (row, column).
 - insert_ext(): adds to insert the row span and column span.
 - resize(): determines how the grid is resized.
-- debug(): shows the cell outline and their numbering, useful for prototyping. 
+- debug(): shows the cell outline and their numbering, useful for prototyping.
 
 
 ```rust,no_run
@@ -40,15 +40,15 @@ fn main() {
 #![allow(clippy::needless_doctest_main)]
 
 use fltk::{prelude::*, *};
+use std::cell::RefCell;
 use std::collections::HashMap;
+use std::rc::Rc;
 
 /// A grid widget
 #[derive(Debug, Clone)]
 pub struct Grid {
     table: table::Table,
-    rows: i32,
-    cols: i32,
-    widgets: HashMap<(i32, i32, i32, i32), widget::Widget>,
+    widgets: Rc<RefCell<HashMap<(i32, i32, i32, i32), widget::Widget>>>,
 }
 
 impl Default for Grid {
@@ -66,9 +66,7 @@ impl Grid {
         table.end();
         Self {
             table,
-            rows: 0,
-            cols: 0,
-            widgets: HashMap::default(),
+            widgets: Rc::new(RefCell::new(HashMap::default())),
         }
     }
 
@@ -77,16 +75,12 @@ impl Grid {
         let g = Grid::default();
         Self {
             table: g.table.size_of_parent().center_of_parent(),
-            rows: 0,
-            cols: 0,
-            widgets: HashMap::default(),
+            widgets: Rc::new(RefCell::new(HashMap::default())),
         }
     }
 
     /// Sets the rows and columns of the widget
     pub fn set_layout(&mut self, rows: i32, cols: i32) {
-        self.rows = rows;
-        self.cols = cols;
         self.table.set_rows(rows);
         self.table.set_cols(cols);
         let parent = self.table.parent().unwrap();
@@ -106,9 +100,11 @@ impl Grid {
         if let Some((x, y, w, h)) = self.table.find_cell(table::TableContext::Cell, row, col) {
             widget.resize(x, y, w * row_span, h * col_span);
             self.table.add(widget);
-            self.widgets.insert((row, col, row_span, col_span), unsafe {
-                widget.into_widget()
-            });
+            self.widgets
+                .borrow_mut()
+                .insert((row, col, row_span, col_span), unsafe {
+                    widget.into_widget()
+                });
         }
     }
 
@@ -119,19 +115,21 @@ impl Grid {
 
     /// Removes a widget
     pub fn remove<W: WidgetExt>(&mut self, widget: &W) {
-        self.widgets.retain(|_, v| unsafe { v.as_widget_ptr() != widget.as_widget_ptr() });
+        self.widgets
+            .borrow_mut()
+            .retain(|_, v| unsafe { v.as_widget_ptr() != widget.as_widget_ptr() });
         self.table.remove(widget);
     }
 
     /// Determine how a grid is resized
     pub fn resize(&mut self, x: i32, y: i32, w: i32, h: i32) {
         self.table.resize(x, y, w, h);
-        let rows = self.rows;
-        let cols = self.cols;
+        let rows = self.table.rows();
+        let cols = self.table.cols();
         let parent = self.table.parent().unwrap();
         self.table.set_row_height_all(parent.h() / rows);
         self.table.set_col_width_all(parent.w() / cols);
-        for wi in &mut self.widgets {
+        for wi in &mut self.widgets.borrow_mut().iter_mut() {
             if let Some((x, y, w, h)) =
                 self.table
                     .find_cell(table::TableContext::Cell, wi.0 .0, wi.0 .1)
