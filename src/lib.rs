@@ -88,7 +88,9 @@ impl Grid {
         self.table.set_col_width_all(parent.w() / cols);
     }
 
-    /// Adds a widget to the grid
+    /// Adds a widget to the grid.
+    /// The row_span refers to the passed row value and is counted in columns.
+    /// The col_span refers to the passed column value and is counted in rows.
     pub fn insert_ext<W: 'static + Clone + WidgetExt>(
         &mut self,
         widget: &mut W,
