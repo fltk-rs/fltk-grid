@@ -35,9 +35,9 @@ impl Form {
         title.set_frame(enums::FrameType::FlatBox);
         title.set_color(enums::Color::Red);
         title.set_label_color(enums::Color::White);
-        grid.insert_ext(
+        grid.insert(
             // insert widgets
-            &mut title, 0, 1, 3, 1,
+            &mut title, 0..3, 1
         );
         grid.insert(&mut frame::Frame::default().with_label("Name"), 2, 1);
         grid.insert(&mut self.name, 2, 3);

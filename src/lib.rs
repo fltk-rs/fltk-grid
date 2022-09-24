@@ -12,7 +12,7 @@ fltk-grid = "0.1"
 
 Basically, the crate contains a single type Grid which has 4 main non-constructor methods:
 - set_layout(): specifies the number of rows and columns of the grid.
-- insert(): specifies the widget to be inserted, along with in which cell (row, column).
+- insert(): specifies the widget to be inserted, along with in which cell (row, column). The values can be a range (0..1).
 - insert_ext(): adds to insert the row span and column span.
 - resize(): determines how the grid is resized.
 - debug(): shows the cell outline and their numbering, useful for prototyping.
@@ -29,7 +29,7 @@ fn main() {
     grid.debug(false); // set to true to show cell outlines and numbers
     grid.set_layout(5, 5); // 5 rows, 5 columns
     grid.insert(&mut button::Button::default(), 0, 1); // widget, row, col
-    grid.insert_ext(&mut button::Button::default(), 2, 1, 3, 1); // widget, row, col, row_span, col_span
+    grid.insert(&mut button::Button::default(), 2..5, 1..2); // widget, row range, col range
     win.end();
     win.show();
     a.run().unwrap();
@@ -42,7 +42,34 @@ fn main() {
 use fltk::{prelude::*, *};
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::ops::Range;
 use std::rc::Rc;
+
+pub struct GridRange {
+    start: usize,
+    end: usize,
+}
+
+impl GridRange {
+    pub fn len(&self) -> usize {
+        self.end - self.start
+    }
+}
+
+impl From<Range<usize>> for GridRange {
+    fn from(val: Range<usize>) -> Self {
+        Self {
+            start: val.start,
+            end: val.end,
+        }
+    }
+}
+
+impl From<usize> for GridRange {
+    fn from(val: usize) -> Self {
+        (val..val + 1).into()
+    }
+}
 
 /// A grid widget
 #[derive(Debug, Clone)]
@@ -111,8 +138,15 @@ impl Grid {
     }
 
     /// Insert a widget with a single span
-    pub fn insert<W: 'static + Clone + WidgetExt>(&mut self, widget: &mut W, row: i32, col: i32) {
-        self.insert_ext(widget, row, col, 1, 1);
+    pub fn insert<W: 'static + Clone + WidgetExt>(
+        &mut self,
+        widget: &mut W,
+        row: impl Into<GridRange>,
+        col: impl Into<GridRange>,
+    ) {
+        let row = row.into();
+        let col = col.into();
+        self.insert_ext(widget, row.start as _, col.start as _, row.len() as _, col.len() as _);
     }
 
     /// Removes a widget
