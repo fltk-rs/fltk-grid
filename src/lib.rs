@@ -153,7 +153,7 @@ impl Grid {
     pub fn remove<W: WidgetExt>(&mut self, widget: &W) {
         self.widgets
             .borrow_mut()
-            .retain(|_, v| unsafe { v.as_widget_ptr() != widget.as_widget_ptr() });
+            .retain(|_, v| v.as_widget_ptr() != widget.as_widget_ptr());
         self.table.remove(widget);
     }
 
