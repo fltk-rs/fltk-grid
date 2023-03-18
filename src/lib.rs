@@ -146,7 +146,7 @@ impl Grid {
     ) {
         let row = row.into();
         let col = col.into();
-        self.insert_ext(widget, row.start as _, col.start as _, row.len() as _, col.len() as _);
+        self.insert_ext(widget, row.start as _, col.start as _, col.len() as _, row.len() as _);
     }
 
     /// Removes a widget
