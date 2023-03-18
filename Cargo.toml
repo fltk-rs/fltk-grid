@@ -1,6 +1,6 @@
 [package]
 name = "fltk-grid"
-version = "1.0.0"
+version = "0.2.0"
 edition = "2018"
 description = "A grid widget for fltk-rs"
 repository = "https://github.com/fltk-rs/fltk-grid"

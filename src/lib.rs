@@ -7,7 +7,7 @@ A grid widget for fltk-rs.
 ```toml,no_run
 [dependencies]
 fltk = "1.3"
-fltk-grid = "0.1"
+fltk-grid = "0.2"
 ```
 
 Basically, the crate contains a single type Grid which has 4 main non-constructor methods:

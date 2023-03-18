@@ -6,7 +6,7 @@ A grid widget for fltk-rs.
 ```toml
 [dependencies]
 fltk = "1.3"
-fltk-grid = "1.0"
+fltk-grid = "0.2"
 ```
 
 Basically, the crate contains a single type Grid which has 4 main non-constructor methods:
@@ -29,6 +29,8 @@ fn main() {
     grid.set_layout(5, 5); // 5 rows, 5 columns
     grid.insert(&mut button::Button::default(), 0, 1); // widget, row, col
     grid.insert(&mut button::Button::default(), 2..3, 1..4); // widget, row range, col range
+    // or
+    // grid.insert_ext(&mut button::Button::default(), 2, 1, 3, 1); // widget, row, col, row_span, col_span
     win.end();
     win.show();
     a.run().unwrap();
