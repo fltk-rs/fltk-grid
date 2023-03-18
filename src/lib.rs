@@ -146,14 +146,14 @@ impl Grid {
     ) {
         let row = row.into();
         let col = col.into();
-        self.insert_ext(widget, row.start as _, col.start as _, row.len() as _, col.len() as _);
+        self.insert_ext(widget, row.start as _, col.start as _, col.len() as _, row.len() as _);
     }
 
     /// Removes a widget
     pub fn remove<W: WidgetExt>(&mut self, widget: &W) {
         self.widgets
             .borrow_mut()
-            .retain(|_, v| unsafe { v.as_widget_ptr() != widget.as_widget_ptr() });
+            .retain(|_, v| v.as_widget_ptr() != widget.as_widget_ptr());
         self.table.remove(widget);
     }
 
