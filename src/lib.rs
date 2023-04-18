@@ -41,9 +41,11 @@ fn main() {
 
 use fltk::{prelude::*, *};
 use std::cell::RefCell;
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 use std::ops::Range;
 use std::rc::Rc;
+
+type WidgetMap = Rc<RefCell<BTreeMap<(i32, i32, i32, i32), widget::Widget>>>;
 
 pub struct GridRange {
     start: usize,
@@ -53,6 +55,10 @@ pub struct GridRange {
 impl GridRange {
     pub fn len(&self) -> usize {
         self.end - self.start
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
     }
 }
 
@@ -75,7 +81,7 @@ impl From<usize> for GridRange {
 #[derive(Debug, Clone)]
 pub struct Grid {
     table: table::Table,
-    widgets: Rc<RefCell<HashMap<(i32, i32, i32, i32), widget::Widget>>>,
+    widgets: WidgetMap,
 }
 
 impl Default for Grid {
@@ -93,7 +99,7 @@ impl Grid {
         table.end();
         Self {
             table,
-            widgets: Rc::new(RefCell::new(HashMap::default())),
+            widgets: Rc::new(RefCell::new(BTreeMap::default())),
         }
     }
 
@@ -102,7 +108,7 @@ impl Grid {
         let g = Grid::default();
         Self {
             table: g.table.size_of_parent().center_of_parent(),
-            widgets: Rc::new(RefCell::new(HashMap::default())),
+            widgets: Rc::new(RefCell::new(BTreeMap::default())),
         }
     }
 
@@ -110,9 +116,8 @@ impl Grid {
     pub fn set_layout(&mut self, rows: i32, cols: i32) {
         self.table.set_rows(rows);
         self.table.set_cols(cols);
-        let parent = self.table.parent().unwrap();
-        self.table.set_row_height_all(parent.h() / rows);
-        self.table.set_col_width_all(parent.w() / cols);
+        self.table.set_row_height_all(self.table.h() / rows);
+        self.table.set_col_width_all(self.table.w() / cols);
     }
 
     /// Adds a widget to the grid.
@@ -146,7 +151,53 @@ impl Grid {
     ) {
         let row = row.into();
         let col = col.into();
-        self.insert_ext(widget, row.start as _, col.start as _, col.len() as _, row.len() as _);
+        self.insert_ext(
+            widget,
+            row.start as _,
+            col.start as _,
+            col.len() as _,
+            row.len() as _,
+        );
+    }
+
+    /// Adds a widget to the grid.
+    /// The row_span refers to the passed row value and is counted in columns.
+    /// The col_span refers to the passed column value and is counted in rows.
+    pub fn insert_grid_ext(
+        &mut self,
+        widget: &mut Grid,
+        row: i32,
+        col: i32,
+        row_span: i32,
+        col_span: i32,
+    ) {
+        if let Some((x, y, w, h)) = self.table.find_cell(table::TableContext::Cell, row, col) {
+            widget.resize(x, y, w * row_span, h * col_span);
+            self.table.add(&widget.table);
+            self.widgets
+                .borrow_mut()
+                .insert((row, col, row_span, col_span), unsafe {
+                    widget.table.into_widget()
+                });
+        }
+    }
+
+    /// Insert a widget with a single span
+    pub fn insert_grid(
+        &mut self,
+        widget: &mut Grid,
+        row: impl Into<GridRange>,
+        col: impl Into<GridRange>,
+    ) {
+        let row = row.into();
+        let col = col.into();
+        self.insert_grid_ext(
+            widget,
+            row.start as _,
+            col.start as _,
+            col.len() as _,
+            row.len() as _,
+        );
     }
 
     /// Removes a widget
@@ -162,9 +213,8 @@ impl Grid {
         self.table.resize(x, y, w, h);
         let rows = self.table.rows();
         let cols = self.table.cols();
-        let parent = self.table.parent().unwrap();
-        self.table.set_row_height_all(parent.h() / rows);
-        self.table.set_col_width_all(parent.w() / cols);
+        self.table.set_row_height_all(self.table.h() / rows);
+        self.table.set_col_width_all(self.table.w() / cols);
         for wi in &mut self.widgets.borrow_mut().iter_mut() {
             if let Some((x, y, w, h)) =
                 self.table
@@ -196,3 +246,5 @@ impl Grid {
         }
     }
 }
+
+fltk::widget_extends!(Grid, table::Table, table);
