@@ -30,7 +30,7 @@ impl Form {
 
     fn fill(&mut self) {
         let grid = &mut self.grid;
-        grid.debug(false); // set to true to see cell outlines
+        grid.show_grid(false); // set to true to see cell outlines
         let mut title = frame::Frame::default().with_label("Employee Form");
         title.set_frame(enums::FrameType::FlatBox);
         title.set_color(enums::Color::Red);

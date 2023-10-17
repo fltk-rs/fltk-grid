@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use fltk::{prelude::*, *};
 use fltk_grid::Grid;
 
@@ -11,7 +13,7 @@ struct Panel {
 impl Panel {
     pub fn default() -> Self {
         let mut grid = Grid::default();
-        grid.debug(false);
+        grid.show_grid(true);
         grid.set_layout(6, 1);
         let mut label = frame::Frame::default().with_label("ARTERY:");
 
@@ -25,7 +27,7 @@ impl Panel {
         grid.insert(&mut cb1, 1, 0);
         grid.insert(&mut cb2, 2, 0);
         grid.insert(&mut btn, 5, 0);
-        btn.set_callback(move |btn| {
+        btn.set_callback(move |_btn| {
             for cb in cbvec.clone() {
                 println!(
                     "CB status: {}",
@@ -38,6 +40,7 @@ impl Panel {
             }
             println!("--------------");
         });
+        grid.end();
         Panel {
             grid,
             label,
@@ -54,12 +57,13 @@ fn main() {
     let a = app::App::default();
     let mut win = window::Window::default().with_size(800, 600);
     let mut grid = Grid::default_fill();
-    grid.debug(false);
+    grid.show_grid(true);
     grid.set_layout(1, 2);
     let mut panel1 = Panel::default();
     let mut panel2 = Panel::default();
-    grid.insert_grid(&mut *panel1, 0, 0);
-    grid.insert_grid(&mut *panel2, 0, 1);
+    grid.insert(&mut *panel1, 0, 0);
+    grid.insert(&mut *panel2, 0, 1);
+    grid.end();
     win.end();
     win.make_resizable(true);
     win.show();
