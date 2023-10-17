@@ -30,7 +30,7 @@ fn main() {
     grid.insert(&mut button::Button::default(), 0, 1); // widget, row, col
     grid.insert(&mut button::Button::default(), 2..3, 1..4); // widget, row range, col range
     // or
-    // grid.insert_ext(&mut button::Button::default(), 2, 1, 3, 1); // widget, row, col, row_span, col_span
+    // grid.set_widget_ext(&mut button::Button::default(), 2, 1, 1, 3, GridAlign::FILL); // widget, row, col, row_span, col_span
     grid.end();
     win.end();
     win.show();
