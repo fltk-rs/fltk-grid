@@ -35,19 +35,19 @@ impl Form {
         title.set_frame(enums::FrameType::FlatBox);
         title.set_color(enums::Color::Red);
         title.set_label_color(enums::Color::White);
-        grid.insert(
-            // insert widgets
+        grid.set_widget(
+            // set_widget widgets
             &mut title,
             0,
             1..4,
         );
-        grid.insert(&mut frame::Frame::default().with_label("Name"), 2, 1);
-        grid.insert(&mut self.name, 2, 3);
-        grid.insert(&mut frame::Frame::default().with_label("Age"), 4, 1);
-        grid.insert(&mut self.age, 4, 3);
-        grid.insert(&mut frame::Frame::default().with_label("Occupation"), 6, 1);
-        grid.insert(&mut self.occupation, 6, 3);
-        grid.insert(&mut self.btn, 8, 2);
+        grid.set_widget(&mut frame::Frame::default().with_label("Name"), 2, 1);
+        grid.set_widget(&mut self.name, 2, 3);
+        grid.set_widget(&mut frame::Frame::default().with_label("Age"), 4, 1);
+        grid.set_widget(&mut self.age, 4, 3);
+        grid.set_widget(&mut frame::Frame::default().with_label("Occupation"), 6, 1);
+        grid.set_widget(&mut self.occupation, 6, 3);
+        grid.set_widget(&mut self.btn, 8, 2);
     }
 
     fn register_default_callback(&mut self) {

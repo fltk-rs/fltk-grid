@@ -11,8 +11,8 @@ fltk-grid = "0.4"
 
 Basically, the crate contains a single type Grid which has 4 main non-constructor methods:
 - set_layout(): specifies the number of rows and columns of the grid.
-- insert(): specifies the widget to be inserted, along with in which cell (row, column). The values can be a range (0..1).
-- insert_ext(): adds to insert the row span and column span, in addition to the Grid Alignment.
+- set_widget(): specifies the widget to be placed, along with in which cell (row, column). The values can be a range (0..1).
+- set_widget_ext(): adds to set_widget the row span and column span, in addition to the Grid Alignment.
 - resize(): determines how the grid is resized.
 - debug(): shows the cell outline and their numbering, useful for prototyping. 
 
@@ -27,8 +27,8 @@ fn main() {
     let mut grid = Grid::default_fill();
     grid.show_grid(false); // set to true to show cell outlines and numbers
     grid.set_layout(5, 5); // 5 rows, 5 columns
-    grid.insert(&mut button::Button::default(), 0, 1); // widget, row, col
-    grid.insert(&mut button::Button::default(), 2..3, 1..4); // widget, row range, col range
+    grid.set_widget(&mut button::Button::default(), 0, 1); // widget, row, col
+    grid.set_widget(&mut button::Button::default(), 2..3, 1..4); // widget, row range, col range
     // or
     // grid.set_widget_ext(&mut button::Button::default(), 2, 1, 1, 3, GridAlign::FILL); // widget, row, col, row_span, col_span
     grid.end();

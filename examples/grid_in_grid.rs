@@ -23,10 +23,10 @@ impl Panel {
         let cbvec = vec![cb1.clone(), cb2.clone()];
 
         let mut btn = button::Button::default().with_label("Submit");
-        grid.insert(&mut label, 0, 0);
-        grid.insert(&mut cb1, 1, 0);
-        grid.insert(&mut cb2, 2, 0);
-        grid.insert(&mut btn, 5, 0);
+        grid.set_widget(&mut label, 0, 0);
+        grid.set_widget(&mut cb1, 1, 0);
+        grid.set_widget(&mut cb2, 2, 0);
+        grid.set_widget(&mut btn, 5, 0);
         btn.set_callback(move |_btn| {
             for cb in cbvec.clone() {
                 println!(
@@ -61,8 +61,8 @@ fn main() {
     grid.set_layout(1, 2);
     let mut panel1 = Panel::default();
     let mut panel2 = Panel::default();
-    grid.insert(&mut *panel1, 0, 0);
-    grid.insert(&mut *panel2, 0, 1);
+    grid.set_widget(&mut *panel1, 0, 0);
+    grid.set_widget(&mut *panel2, 0, 1);
     grid.end();
     win.end();
     win.make_resizable(true);
