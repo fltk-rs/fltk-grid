@@ -1,11 +1,11 @@
 # fltk-grid
 
-A grid widget for fltk-rs.
+A grid widget for fltk-rs. This crate exists for backwards compatibility, since fltk 1.5 provides a Grid widget (under `fltk::group::Grid`).
 
 ## Usage
 ```toml
 [dependencies]
-fltk = "1.4.15"
+fltk = "1.5.0"
 fltk-grid = "0.4"
 ```
 

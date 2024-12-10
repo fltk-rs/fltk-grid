@@ -1,6 +1,6 @@
 [package]
 name = "fltk-grid"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2021"
 description = "A grid widget for fltk-rs"
 repository = "https://github.com/fltk-rs/fltk-grid"
@@ -11,4 +11,4 @@ readme = "README.md"
 license = "MIT"
 
 [dependencies]
-fltk = "1.4.15"
+fltk = "1.5.0"
